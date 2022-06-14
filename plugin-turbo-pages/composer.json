@@ -1,0 +1,28 @@
+{
+    "name": "cetera-labs/plugin-turbo-pages",
+    "description": "Турбо-страницы для Яндекс.",
+    "type": "cetera-cms-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Name",
+            "role": "Author"
+        },
+    ],
+    "require": {
+    },
+    
+    "minimum-stability": "dev",
+    
+    "autoload": {
+        "psr-0": { 
+			"TurboPages\\": "classes/"
+		}
+    },
+
+    "extra": {
+        "name": "turbo-pages",
+        "title": "Турбо-страницы",
+        "description": "Турбо-страницы для Яндекс."
+    }
+} 
