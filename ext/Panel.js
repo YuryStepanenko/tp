@@ -1,26 +1,33 @@
+const control = Ext.create('Plugin.turbo-pages.control', {
+});
+
+const gridDirs = Ext.create('Plugin.turbo-pages.grid', {
+    flex: 1,
+    from: 'dir_data',
+    title: _('Список исключенных разделов'),
+});
+
+const gridMats = Ext.create('Plugin.turbo-pages.grid', {
+    flex: 1,
+    from: 'materials',
+    title: _('Список исключенных материалов'),
+});
+
 Ext.define('Plugin.turbo-pages.Panel', {
-    extend: 'Ext.panel.FormPanel',
+    
+    extend: 'Ext.panel.Panel',
 
-    requires: ['Plugin.turbo-pages.grid', 'Plugin.turbo-pages.grid'],
-
-    bodyCls: 'x-window-body-default',
-    cls: 'x-window-body-default',
     style: 'border: none',
     border: false,
-    layout: 'vbox',
+    layout: {
+        type: 'vbox',
+        align: 'stretch',
+    },
 
     items: [
-        Ext.create('Plugin.turbo-pages.grid', {
-            flex: 1,
-            from: 'dir_data',
-            'title': _('Список разделов'),
-        }),
-        Ext.create('Plugin.turbo-pages.grid', {
-            flex: 1,
-            from: 'materials',
-            'title': _('Список материалов'),
-        })
-
-    ]
+        control,
+        gridDirs,
+        gridMats,
+    ],
 
 });
