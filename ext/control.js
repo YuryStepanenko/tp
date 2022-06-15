@@ -1,24 +1,3 @@
-const eTest = Ext.create('Ext.Button', {
-    text: _('Тестовые данные'),
-    width: 100,
-    
-    handler: function() {
-        const self = this;
-        Ext.Ajax.request({
-            url: '/plugins/turbo-pages/data/test.php',
-            method: 'POST',
-            params: {
-            },
-            success: function(response, options){
-                // const result = Ext.decode(response.responseText);
-            },
-            failure: function(response, options){
-                alert("Ошибка: " + response.statusText);
-            }
-        });
-    },
-});
-
 const eExport = Ext.create('Ext.Button', {
 
     text: _('Экспорт'),
@@ -90,7 +69,6 @@ Ext.define('Plugin.turbo-pages.control', {
     extend: 'Ext.toolbar.Toolbar',
 
     items: [
-        eTest, '-',
         eExport,
         '-',
         eFileName,]
