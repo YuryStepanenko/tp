@@ -15,11 +15,11 @@ class Options {
     }
 
     public function getDirIDs() {
-        return self::configGet('dirs');
+        return self::configGet('dirs') ?? [];
     }
 
     public function getMaterialIDs() {
-        return self::configGet('materials');
+        return self::configGet('materials') ?? [];
     }
 
     public function setFilename($filename) {
