@@ -1,8 +1,12 @@
-const tbDirs = (scope, from) => {
+const toolbar = (scope, from) => {
 
     const btnReload = {
         tooltip: _('Обновить'),
         iconCls: 'icon-reload',
+        scope: scope,
+        handler: function () {
+            this.reload();
+        },
     };
 
     const btnAdd = {
@@ -16,8 +20,6 @@ const tbDirs = (scope, from) => {
         },
     }
 
-    const separator = '-';
-
     const btnDelete = {
         id: from + 'tp_delete',
         disabled: true,
@@ -30,18 +32,20 @@ const tbDirs = (scope, from) => {
         },
     }
 
-    const toolbar = Ext.create('Ext.toolbar.Toolbar');
+    const toolbar = Ext.create('Ext.toolbar.Toolbar', {
+        
+        items: [
+            btnReload,
+            '-',
+            btnAdd,
+            '-',
+            btnDelete,
+        ],
+    });
     
-    toolbar.add(btnReload);
-    toolbar.add(separator);
-    toolbar.add(btnAdd);
-    toolbar.add(separator);
-    toolbar.add(btnDelete);
-
     return toolbar;
 }
 
-//cms
 Ext.define('Plugin.turbo-pages.grid', {
  
     extend: 'Ext.grid.GridPanel',
@@ -52,7 +56,6 @@ Ext.define('Plugin.turbo-pages.grid', {
             'selectionchange': {
                 fn: function (sm) {
                     const hs = sm.hasSelection();
-                    // Ext.getCmp(sm.store.from + 'tp_edit').setDisabled(!hs);
                     Ext.getCmp(sm.store.from + 'tp_delete').setDisabled(!hs);
                 },
                 scope: this
@@ -91,17 +94,8 @@ Ext.define('Plugin.turbo-pages.grid', {
             from: this.from,
         });
 
-        this.tbar = tbDirs(this, this.from);
+        this.tbar = toolbar(this, this.from);
 
-        this.on({
-            'celldblclick': function () {
-                alert(this.getSelectionModel().getSelection()[0].getId());
-            },
-            scope: this
-        },
-        );
-
-        this.fireEvent('activate');
         this.callParent();
         this.reload();
     },
@@ -112,6 +106,7 @@ Ext.define('Plugin.turbo-pages.grid', {
 
     reload: function () {
         this.store.load();
+        console.log('reload: ' + this.from);
     },
 
     addEx: function () {
@@ -127,7 +122,7 @@ Ext.define('Plugin.turbo-pages.grid', {
     },
 
     deleteEx: function () {
-
+        scope = this;
         Ext.Ajax.request({
             url: '/plugins/turbo-pages/data/options.php',
             params: {
@@ -135,9 +130,10 @@ Ext.define('Plugin.turbo-pages.grid', {
                 from: this.from,
                 param: this.getSelectionModel().getSelection()[0].getId(),
             },
-            scope: this,
+            scope: scope,
             success: function (response, options) {
-                this.store.reload();
+                this.reload();
+                console.log('delete');
             },
             failure: function (response, options) {
 

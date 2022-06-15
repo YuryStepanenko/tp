@@ -1,35 +1,44 @@
-const eSave = Ext.create('Ext.Button', {
-    text: _('Сохранить'),
+const eTest = Ext.create('Ext.Button', {
+    text: _('Тестовые данные'),
+    width: 100,
+    
     handler: function() {
+        const self = this;
         Ext.Ajax.request({
-            url: '/plugins/turbo-pages/data/options.php',
+            url: '/plugins/turbo-pages/data/test.php',
             method: 'POST',
             params: {
-                action: 'setFilename',
-                param: Ext.getCmp('tp-filename').getValue()
             },
             success: function(response, options){
-                const result = Ext.decode(response.responseText);
-                console.log(result);
-    
+                // const result = Ext.decode(response.responseText);
             },
             failure: function(response, options){
                 alert("Ошибка: " + response.statusText);
             }
         });
     },
-    width: 100,
-
 });
 
 const eExport = Ext.create('Ext.Button', {
+
     text: _('Экспорт'),
+    width: 100,
+
     handler: function() {
+
+        const eInput = Ext.getCmp('tp-filename');
+        const valueCurrent = eInput.getValue().trim();
+        const filename = valueCurrent === '' ? eInput.valueDefault : valueCurrent;
+
+        if (filename !== valueCurrent) {
+            eInput.setValue(filename);
+        }
+
         Ext.Ajax.request({
             url: '/plugins/turbo-pages/data/export.php',
             method: 'POST',
             params: {
-                param: Ext.getCmp('tp-filename').getValue()
+                param: filename
             },
             success: function(response, options){
                 const result = Ext.decode(response.responseText);
@@ -41,11 +50,10 @@ const eExport = Ext.create('Ext.Button', {
             }
         });
     },
-    width: 100,
-
 });
 
 const filenameInit = (eInput) => {
+
     Ext.Ajax.request({
         url: '/plugins/turbo-pages/data/options.php',
         method: 'POST',
@@ -63,12 +71,14 @@ const filenameInit = (eInput) => {
 }
 
 const eFileName = {
+
     xtype: 'textfield',
     id: 'tp-filename',
     name: 'filename',
     fieldLabel: _('Файл экспорта'),
     allowBlank: false,
     value: 'turbo-default.xml',
+    valueDefalult: 'turbo-default.xml',
     flex: 1,
     initComponent: function () {
         filenameInit(this);
@@ -76,11 +86,11 @@ const eFileName = {
 }
 
 Ext.define('Plugin.turbo-pages.control', {
+
     extend: 'Ext.toolbar.Toolbar',
 
     items: [
-        eSave,
-        '-',
+        eTest, '-',
         eExport,
         '-',
         eFileName,]

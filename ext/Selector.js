@@ -1,13 +1,13 @@
 const listDirs = Ext.create('Cetera.field.DirSet', {
-    name: 'dir_data',
     from: '0',
     height: 230,
+    name: 'dir_data',
 });
 
-const listMaterials = Ext.create('Cetera.field.MatSet', {
-    name: 'materials',
+const listMaterials = Ext.create('Cetera.field.LinkSet', {
     from: '0',
     height: 230,
+    name: 'materials',
 });
 
 const setToArray = (set) => {
@@ -40,8 +40,6 @@ Ext.define('Plugin.turbo-pages.Selector', {
     modal: true,
     resizable: false,
     border: false,
-
-    listId: 0,
 
     initComponent: function () {
 
@@ -104,7 +102,6 @@ Ext.define('Plugin.turbo-pages.Selector', {
             success: function(response, options){
                 // const result = Ext.decode(response.responseText);
                 // console.log(result);
-    
             },
             failure: function(response, options){
                 alert("Ошибка: " + response.statusText);
