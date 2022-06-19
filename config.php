@@ -9,3 +9,5 @@ if ($this->getBo() && $this->getUser() && $this->getUser()->allowAdmin()) {
         'class' => 'Plugin.turbo-pages.Panel'        
     ));
 }
+
+$this->addCronJob(__DIR__.'data/export.php');
