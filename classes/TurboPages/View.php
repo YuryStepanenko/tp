@@ -6,7 +6,7 @@ class View {
 
     use \Cetera\DbConnection;
 
-    public static function get($ids, $from) {
+    public static function get(Array $ids, String $from) {
 
         if (count($ids) === 0) {
             return [];

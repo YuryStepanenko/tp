@@ -22,15 +22,15 @@ class Options {
         return self::configGet('materials') ?? [];
     }
 
-    public function setFilename($filename) {
+    public function setFilename(String $filename) {
         self::configSet('filename', $filename);
     }
 
-    public function setDirIDs($dir_ids) {
+    public function setDirIDs(Array $dir_ids) {
         self::configSet('dirs', $dir_ids);
     }
 
-    public function setMaterialIDs($material_ids) {
+    public function setMaterialIDs(Array $material_ids) {
         self::configSet('materials', $material_ids);
     }
 

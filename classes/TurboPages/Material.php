@@ -6,7 +6,7 @@ class Material {
     
     use \Cetera\DbConnection;
 
-    public static function getByID($id) {
+    public static function getByID(int $id) {
 
         $query = self::getDbConnection()->createQueryBuilder();
         $result = $query

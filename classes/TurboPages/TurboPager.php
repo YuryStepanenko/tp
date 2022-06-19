@@ -6,75 +6,52 @@ class TurboPager {
 
     use \Cetera\DbConnection;
 
-    private static function getItems() {
+    private static function getExcludedIDs() {
 
         $dirIDs = \TurboPages\Options::getDirIDs();
-        // $str = '';
-        // foreach ($dirIDs as $dirID) {
-        //     $str .= $dirID . ', ';
-        // }
-        // throw new \Exception($str);
 
         $subMaterialIDs = [];
 
         foreach ($dirIDs as $dirID) {
-            //file_put_contents(DOCROOT . 'log.txt', $dirID, FILE_APPEND);
-            if ($dirID === 9594) {
-                continue;
-            }
-            //$catalog = new \TurboPages\Catalog($dirID);
-            $catalog = \Cetara\Catalog::getbyID($dirID);
+            $catalog = \Cetera\Catalog::getByID($dirID);
             $subMaterialIDs = [...$subMaterialIDs, ...\TurboPages\Catalog::getSubMaterialIDs($catalog)];
         }
 
         $materialIDs = \TurboPages\Options::getMaterialIDs();
 
-        $excludedIDs = array_unique([...$subMaterialIDs, ...$materialIDs]);
+        return array_unique([...$subMaterialIDs, ...$materialIDs]);
 
-        $idRoot = 1;
-        $root = new \TurboPages\Catalog($idRoot);
-        $allIDs = $root->getSubMaterialIDs();
+    }
 
-        $ids = array_diff($allIDs, $excludedIDs);
-
-        $items = [];
-        $counter = 0;
-        // $ex = [];
-        // $ex[] = 31;
-        // $ex[] = 32;
-        foreach ($ids as $id) {
-            // if (in_array($id, $ex)) {
-            //     continue;
-            // }
-            $items[] = new \TurboPages\Item($id);
-        }
+    private static function toString() {
         
-        return $items;
-    }
+        $result = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 
-    private static function toString($items) {
-        $cb = function ($acc, $item) {
-            $acc .= $item->toString();
-            return $acc;
-        };
-        $result = array_reduce($items, $cb, '');
-        return $result;
-    }
+        $nodeChannels = new \TurboPages\Node('rss', [], ['xmlns:yandex' => 'http://news.yandex.ru',
+                                                'xmlns:media' => 'http://search.yahoo.com/mrss/',
+                                                'xmlns:turbo' => 'http://turbo.yandex.ru',
+                                                'version' => '2.0']);
 
-    private static function save($items) {
-        $prefix = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL . 
-        '<rss xmlns:yandex="http://news.yandex.ru" xmlns:media="http://search.yahoo.com/mrss/" xmlns:turbo="http://turbo.yandex.ru" version="2.0">' . PHP_EOL . 
-        '<channel>' . PHP_EOL;
-        $postfix = '</channel></rss>';
+        $root = \Cetera\Catalog::getRoot();
 
-        $content = self::toString($items);
-        $filename = \TurboPages\Options::getFilename();
-        file_put_contents(DOCROOT . $filename, $prefix . $content . $postfix);
+        $servers = $root->getChildren();
+
+        $excludedIDs = self::getExcludedIDs();
+
+        foreach ($servers as $server) {
+            $channel = new \TurboPages\Channel($server->id, $excludedIDs);
+            $nodeChannels->addChild($channel);
+        }
+
+        return $result . $nodeChannels->toString();
+
     }
 
     public static function export() {
-        $items = self::getItems();
-        self::save($items);
+
+        $filename = \TurboPages\Options::getFilename();
+        $content = self::toString();
+        file_put_contents(DOCROOT . $filename, $content);
     }
 }
 

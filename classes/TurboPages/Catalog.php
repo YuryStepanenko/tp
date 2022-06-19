@@ -2,15 +2,9 @@
 
 namespace TurboPages;
 
-class Catalog extends \Cetera\Catalog {
+class Catalog {
 
-    private $catalog;
-
-    public function __construct($id = 1) {
-        $this->catalog = self::getByID($id);
-    }
-
-    private function getLocalMaterials($catalog) {
+    private static function getLocalMaterials(\Cetera\Catalog $catalog) {
         
         $materials = $catalog->getMaterials();
 
@@ -25,11 +19,7 @@ class Catalog extends \Cetera\Catalog {
         return $materialIDs;
     }
 
-    public function getSubMaterialIDs($catalog = false) {
-       
-        if (!$catalog) {
-            $catalog = $this->catalog;
-        }
+    public static function getSubMaterialIDs(\Cetera\Catalog $catalog) {
 
         if ($catalog->isLink() || $catalog->isHidden()) {
             return [];
@@ -39,16 +29,16 @@ class Catalog extends \Cetera\Catalog {
 
         if (count($oSubCatalogs) === 0 ) {
 
-            return $this->getLocalMaterials($catalog);
+            return self::getLocalMaterials($catalog);
         }
 
         $ids = [];
 
         foreach ($oSubCatalogs as $subCatalog) {
-            $ids = [...$ids, ...$this->getSubMaterialIDs($subCatalog)];
+            $ids = [...$ids, ...self::getSubMaterialIDs($subCatalog)];
         }
 
-        $ids = [...$ids, ...$this->getLocalMaterials($catalog)];
+        $ids = [...$ids, ...self::getLocalMaterials($catalog)];
 
         return $ids;
  
