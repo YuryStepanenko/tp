@@ -9,12 +9,22 @@ class TurboPager {
     private static function getItems() {
 
         $dirIDs = \TurboPages\Options::getDirIDs();
+        // $str = '';
+        // foreach ($dirIDs as $dirID) {
+        //     $str .= $dirID . ', ';
+        // }
+        // throw new \Exception($str);
 
         $subMaterialIDs = [];
 
         foreach ($dirIDs as $dirID) {
-            $catalog = new \TurboPages\Catalog($dirID);
-            $subMaterialIDs = [...$subMaterialIDs, ...$catalog->getSubMaterialIDs()];
+            //file_put_contents(DOCROOT . 'log.txt', $dirID, FILE_APPEND);
+            if ($dirID === 9594) {
+                continue;
+            }
+            //$catalog = new \TurboPages\Catalog($dirID);
+            $catalog = \Cetara\Catalog::getbyID($dirID);
+            $subMaterialIDs = [...$subMaterialIDs, ...\TurboPages\Catalog::getSubMaterialIDs($catalog)];
         }
 
         $materialIDs = \TurboPages\Options::getMaterialIDs();
