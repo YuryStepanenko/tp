@@ -10,4 +10,4 @@ if ($this->getBo() && $this->getUser() && $this->getUser()->allowAdmin()) {
     ));
 }
 
-$this->addCronJob(__DIR__.'data/export.php');
+$this->registerCronJob(__DIR__.'data/export.php');
